@@ -1,4 +1,4 @@
-# TicTacToeGame
+# TicTacToe Game
 
 The Game has two modes
 1. player1 vs player2
