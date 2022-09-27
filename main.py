@@ -190,10 +190,16 @@ class AI:
 
     def analyse(self, main_board):
         if self.level == 0:
-            # random choice
-            move, eval = self.rnd_choice(main_board), None
+            # for easy level
+            move, eval = self.rnd_choice(main_board), 'Random'
+        elif self.level == 1:
+            # for medium level
+            if main_board.marked_sqrs == 1:
+                move, eval = self.rnd_choice(main_board), 'Random'
+            else:
+                move, eval = self.minimax(main_board, False)
         else:
-            # AI algo choice
+            # for hard level
             move, eval = self.minimax(main_board, False)
         print(f'AI has marked the square at position {move} with the evaluation = {eval}')
         return move
@@ -273,13 +279,17 @@ def difficulty():
     text = MSG_FONT.render("Difficulty Level", False, RED)
     win.blit(text, ((WIDTH - text.get_width()) // 2, 120))
     # Easy button
-    pygame.draw.rect(win, WHITE, pygame.Rect(200, 285, 200, 80), border_radius=15)
+    pygame.draw.rect(win, WHITE, pygame.Rect(200, 225, 200, 80), border_radius=15)
     text = BUTTON_FONT.render("Easy", True, CROSS_COLOUR)
-    win.blit(text, ((WIDTH - text.get_width()) // 2, 300))
+    win.blit(text, ((WIDTH - text.get_width()) // 2, 240))
+    # medium button
+    pygame.draw.rect(win, WHITE, pygame.Rect(200, 345, 200, 80), border_radius=15)
+    text = BUTTON_FONT.render("Medium", True, CROSS_COLOUR)
+    win.blit(text, ((WIDTH - text.get_width()) // 2, 360))
     # Hard button
-    pygame.draw.rect(win, WHITE, pygame.Rect(200, 435, 200, 80), border_radius=15)
+    pygame.draw.rect(win, WHITE, pygame.Rect(200, 465, 200, 80), border_radius=15)
     text = BUTTON_FONT.render("Hard", True, CROSS_COLOUR)
-    win.blit(text, ((WIDTH - text.get_width()) // 2, 450))
+    win.blit(text, ((WIDTH - text.get_width()) // 2, 480))
 
     pygame.display.update()
     while True:
@@ -288,10 +298,12 @@ def difficulty():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 point = event.pos
-                if 0 < point[0] - 200 < 200 and 0 < point[1] - 285 < 80:
+                if 0 < point[0] - 200 < 200 and 0 < point[1] - 225 < 80:
                     return 0
-                elif 0 < point[0] - 200 < 200 and 0 < point[1] - 435 < 80:
+                elif 0 < point[0] - 200 < 200 and 0 < point[1] - 345 < 80:
                     return 1
+                elif 0 < point[0] - 200 < 200 and 0 < point[1] - 465 < 80:
+                    return 2
 
 
 def score_update(result, mode):
@@ -336,11 +348,12 @@ def score_update(result, mode):
 
 def main(mode, level):
     global result
+    levels = ['Easy', 'Medium', 'Hard']
     # mainloop
     if mode == 'pvp':
         pygame.display.set_caption("TicTacToe Game! (P vs P Mode)")
     else:
-        pygame.display.set_caption("TicTacToe Game! (AI Mode)")
+        pygame.display.set_caption(f"TicTacToe Game! (AI Mode || Level - {levels[level]})")
     win.fill(BG_COLOUR)
     game = Game(mode, level)
     board = game.board
@@ -401,6 +414,7 @@ while True:
     print(mode, level)
     signal = True
     while signal:
+        print("New game : ")
         main(mode, level)
         signal = score_update(result, mode)
 
